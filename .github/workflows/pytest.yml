@@ -1,12 +1,13 @@
 name: Run Pytest with HTML Report
 
 on:
-  push:
-    branches: [main]  # Trigger only on push to main
+  push:           # ✅ Trigger on push to ANY branch
+  pull_request:   # ✅ Also run tests on pull requests (optional but good practice)
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,14 +23,18 @@ jobs:
           pip install pytest pytest-playwright pytest-html
           playwright install --with-deps chromium
 
-      - name: List files for debugging
-        run: ls -R  # Show repo structure
+      - name: Show project structure (for debugging)
+        run: ls -R
 
-      - name: Run pytest with HTML report
-        run: pytest Playwright/test_playw_test_1.py --html=reports/pytest-report-${{ github.run_id }}.html --self-contained-html --verbose
+      - name: Run pytest and generate HTML report
+        run: |
+          mkdir -p reports
+          pytest Playwright/test_playw_test_1.py \
+            --html=reports/pytest-report-${{ github.run_id }}.html \
+            --self-contained-html --verbose
 
-      - name: Upload HTML report
-        if: always()
+      - name: Upload HTML report artifact
+        if: always()   # ✅ Upload even if tests fail
         uses: actions/upload-artifact@v4
         with:
           name: pytest-report-${{ github.run_id }}
