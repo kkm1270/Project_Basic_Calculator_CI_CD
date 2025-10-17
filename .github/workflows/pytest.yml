@@ -29,7 +29,7 @@ jobs:
       - name: Run pytest and generate HTML report
         run: |
           mkdir -p reports
-          pytest Playwright/test_playw_test_1.py \
+          pytest playwright/test_playw_test_1.py \
             --html=reports/pytest-report-${{ github.run_id }}.html \
             --self-contained-html --verbose
 
